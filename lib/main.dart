@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:tiny_cosmos/theme/app_theme.dart';
+
 void main() {
   runApp(const CheckInApp());
 }
@@ -12,10 +14,7 @@ class CheckInApp extends StatelessWidget {
     return MaterialApp(
       title: 'Check In',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3D6B5A)),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.dark,
       home: const WelcomePage(),
     );
   }
