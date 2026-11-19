@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'package:tiny_cosmos/theme/app_theme.dart';
+
 void main() {
-  runApp(const CheckInApp());
+  runApp(const TinyCosmosApp());
 }
 
-class CheckInApp extends StatelessWidget {
-  const CheckInApp({super.key});
+class TinyCosmosApp extends StatelessWidget {
+  const TinyCosmosApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Check In',
+      title: 'Tiny Cosmos',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3D6B5A)),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.dark,
       home: const WelcomePage(),
     );
   }
@@ -40,22 +39,20 @@ class WelcomePage extends StatelessWidget {
                 children: [
                   const Spacer(),
                   Icon(
-                    Icons.chat_bubble_outline_rounded,
+                    Icons.auto_awesome_rounded,
                     size: 56,
                     color: colors.primary,
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Check In',
+                    'Tiny Cosmos',
                     style: theme.textTheme.displaySmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'One question a week for you and your friends. '
-                    'Everyone answers, then everyone’s answers are shared '
-                    'with the group.',
+                    'A weekly check-in for your people.',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colors.onSurfaceVariant,

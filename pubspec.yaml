@@ -1,5 +1,5 @@
-name: checkin
-description: "A weekly check-in prompt for groups of friends."
+name: tiny_cosmos
+description: "Tiny Cosmos: a weekly check-in for your people."
 publish_to: 'none'
 version: 0.1.0+1
 
