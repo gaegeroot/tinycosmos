@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tiny_cosmos_background">#0E1330</color>
+    <color name="tiny_cosmos_label">#F2C46B</color>
+    <color name="tiny_cosmos_snippet">#F4F5FB</color>
+</resources>
