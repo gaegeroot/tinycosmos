@@ -29,8 +29,37 @@ func (r *UserRepository) CreateUser(ctx context.Context, u domain.User) error {
 	if err := u.Validate(); err != nil {
 		return err
 	}
+	return insertUser(ctx, r.db, u)
+}
 
-	_, err := r.db.ExecContext(ctx,
+// CreateUserWithIdentity stores a new user and its first external identity
+// atomically: either both are stored or neither is.
+//
+// It returns the same errors as CreateUser and CreateUserIdentity. In
+// particular, domain.ErrUserIdentityAlreadyExists means another user already
+// holds that external identity (for example, a concurrent provisioning
+// request won the race), and no user was created.
+func (r *UserRepository) CreateUserWithIdentity(ctx context.Context, u domain.User, identity domain.UserIdentity) error {
+	if err := u.Validate(); err != nil {
+		return err
+	}
+	if err := identity.Validate(); err != nil {
+		return err
+	}
+	if identity.UserID != u.ID {
+		return fmt.Errorf("create user with identity: identity user id %q does not match user id %q",
+			identity.UserID, u.ID)
+	}
+	return inTx(ctx, r.db, func(tx *sql.Tx) error {
+		if err := insertUser(ctx, tx, u); err != nil {
+			return err
+		}
+		return insertIdentity(ctx, tx, identity)
+	})
+}
+
+func insertUser(ctx context.Context, ex execer, u domain.User) error {
+	_, err := ex.ExecContext(ctx,
 		`INSERT INTO users (id, created_at) VALUES (?, ?)`,
 		string(u.ID), formatTimestamp(u.CreatedAt),
 	)
@@ -78,7 +107,11 @@ func (r *UserRepository) CreateUserIdentity(ctx context.Context, identity domain
 		return err
 	}
 
-	_, err := r.db.ExecContext(ctx,
+	return insertIdentity(ctx, r.db, identity)
+}
+
+func insertIdentity(ctx context.Context, ex execer, identity domain.UserIdentity) error {
+	_, err := ex.ExecContext(ctx,
 		`INSERT INTO user_identities (id, user_id, provider, provider_user_id, created_at)
 		 VALUES (?, ?, ?, ?, ?)`,
 		string(identity.ID),

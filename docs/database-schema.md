@@ -395,9 +395,11 @@ The migration uses SQLite's `strftime('%Y-%m-%dT%H:%M:%fZ', 'now')` expression f
 
 ## 9. Local development and migrations
 
-Save the migration as `database/migrations/001_initial_schema.sql`.
+Migrations live in `database/migrations/` and are embedded into the Go binaries. The bot (`go run ./cmd/bot`) creates the database if needed and applies any new migrations on startup, tracking the applied version with `PRAGMA user_version`. Migration files must be named `NNN_description.sql`.
 
-Apply it to a new local SQLite database:
+The migrator refuses to touch a database that has tables but no recorded version, such as one created by hand with the command below, because it can't tell which migrations that database already contains. Let the bot create the database instead, or delete a hand-made one before starting the bot.
+
+To apply the schema by hand without the bot (for quick experiments only):
 
 ```bash
 mkdir -p data
