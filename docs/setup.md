@@ -1,6 +1,6 @@
 # Agent setup
 
-How to run the AI coding agents (Claude Code, OpenCode) for **Check In** safely, inside a Docker container. For normal Flutter development, see [DEVELOPMENT.md](DEVELOPMENT.md).
+How to run Claude Code safely inside a Docker development container. For normal Flutter development, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 The container is the security boundary. The agent can only see this project folder and its own login credentials. It runs as a normal (non-root) user and can't reach the rest of your computer.
 
@@ -9,7 +9,7 @@ The container is the security boundary. The agent can only see this project fold
 Run this from the project root on the host:
 
 ```bash
-docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t checkin-dev .
+USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f infrastructure/docker/compose.yaml build agent
 ```
 
 `USER_ID`/`GROUP_ID` give the container's `agent` user the same UID/GID as you, so files the agent creates are owned by you on the host, not by root.
@@ -17,25 +17,20 @@ docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t check
 ## Run
 
 ```bash
-docker run -it --rm \
-  --name checkin-agent \
-  --network bridge \
-  -v "$PWD":/workspace \
-  -v checkin-claude-auth:/claude-auth \
-  checkin-dev
+USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f infrastructure/docker/compose.yaml run --rm agent
 ```
 
-Then start the agent in the container's shell with `claude` (or `opencode`).
+Then start the agent in the container shell with `claude`.
 
 | Setting | Value |
 |---|---|
 | Mounted path | Host project folder (`$PWD`) → `/workspace` (read-write) |
-| Credentials volume | Named Docker volume `checkin-claude-auth` → `/claude-auth` |
+| Credentials volume | Compose-managed `claude-auth` volume → `/claude-auth` |
 | Network mode | `bridge` (Docker's default network: outbound internet only, no published ports) |
 | User | `agent`, unprivileged, UID/GID from the host, no `sudo` |
 | Not mounted | Home directory, SSH keys, cloud credentials, Docker socket |
 
-The first time you run it, log in with `claude` (`/login`). `docker-entrypoint.sh` copies the credentials into the `checkin-claude-auth` volume and restores them on later runs, so you don't have to log in again. To revoke the agent's access, run `docker volume rm checkin-claude-auth` and log out of that session on claude.ai.
+The first time you run it, log in with `claude` (`/login`). `docker-entrypoint.sh` copies the credentials into the Compose-managed `claude-auth` volume and restores them on later runs, so you don't have to log in again. To revoke the agent's access, run `docker compose -f infrastructure/docker/compose.yaml down -v` and log out of that session on claude.ai.
 
 ## Smoke test
 
@@ -95,7 +90,6 @@ Only the Claude Code login, kept in a named volume so it never sits in the proje
 **What risks are still there?**
 - **The agent can modify or delete any file in the project.** The project isn't a git repository yet, so there's no easy way to undo a bad edit. Setting up git (and committing before agent sessions) is the most important next step.
 - **Outbound network access is unrestricted.** The agent could send project files to any server. The code isn't sensitive yet, but an allowlist (for example, only `api.anthropic.com` and package registries) is worth adding if secrets are added later.
-- **ngrok is installed** and could publish a local server to the internet. It isn't configured with an auth token, so it can't run for now. Remove it from the `Dockerfile` if it's never needed.
 - **The agent can read its own login token** in `/claude-auth`. That's needed for it to work, but it means the token would leak if the agent were tricked into sending it somewhere.
 - **No CPU, memory or process limits.** Add `--memory`, `--cpus` and `--pids-limit` to the run command if a runaway process becomes a problem.
 

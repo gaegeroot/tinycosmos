@@ -53,7 +53,7 @@ The bundle/application ID is `com.gaegeroot.checkin` on every platform. If you e
 
 ## Docker dev container
 
-The `Dockerfile` builds a container for AI coding agents (Claude Code, OpenCode, ngrok). **It does not include Flutter**, so you can edit code in it but not build or run the app.
+The container setup in `infrastructure/docker/` provides Claude Code, Go, Dart, SQLite, Git, and common build tools for monorepo development. **It intentionally does not include Flutter or mobile SDKs**, so mobile UI builds still run on the host.
 
 For the run command, the security setup and the smoke test, see [setup.md](setup.md).
 

@@ -1,0 +1,24 @@
+services:
+  agent:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+      args:
+        USER_ID: "${USER_ID:-1000}"
+        GROUP_ID: "${GROUP_ID:-1000}"
+        GO_VERSION: "${GO_VERSION:-1.25.1}"
+        DART_VERSION: "${DART_VERSION:-3.13.7}"
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - ../..:/workspace
+      - claude-auth:/claude-auth
+    environment:
+      TZ: "${TZ:-UTC}"
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  claude-auth:

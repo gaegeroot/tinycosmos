@@ -1,4 +1,3 @@
-
 #!/bin/bash
 set -eu
 
@@ -8,15 +7,15 @@ CLAUDE_CONFIG=/home/agent/.claude.json
 
 mkdir -p "$AUTH_DIR" "$CLAUDE_DIR"
 
-# Restore previously saved credentials
 if [ -f "$AUTH_DIR/.credentials.json" ]; then
     cp "$AUTH_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json"
     chmod 600 "$CLAUDE_DIR/.credentials.json"
 
-    echo '{ "hasCompletedOnboarding": true, "projects": { "/workspace": { "hasTrustDialogAccepted": true } } }' > "$CLAUDE_CONFIG"
+    cat > "$CLAUDE_CONFIG" <<'EOF'
+{"hasCompletedOnboarding":true,"projects":{"/workspace":{"hasTrustDialogAccepted":true}}}
+EOF
 fi
 
-# Background credential synchronization
 (
     set +e
 

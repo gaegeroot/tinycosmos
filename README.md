@@ -80,6 +80,7 @@ Prerequisites: the [Flutter SDK](https://docs.flutter.dev/get-started/install) a
 ```bash
 git clone <repo-url>
 cd tiny-cosmos
+cd apps/mobile
 flutter pub get
 flutter run
 ```
