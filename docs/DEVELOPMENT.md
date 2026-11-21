@@ -1,6 +1,6 @@
 # Development
 
-Setup notes for working on **Check In** (`checkin`), a Flutter app.
+Setup notes for working on **Tiny Cosmos** (Dart package `tiny_cosmos`), a Flutter app in `apps/mobile/`.
 
 ## Prerequisites
 
@@ -45,11 +45,15 @@ Analysis skips `build/` and all the platform folders (see `analysis_options.yaml
 
 ## App identifier
 
-The bundle/application ID is `com.gaegeroot.checkin` on every platform. If you ever change it, update all of these places:
+The bundle/application ID is `com.gaegeroot.tinycosmos` on every platform, and the desktop executable name is `tiny_cosmos`. If you ever change them, update all of these places (paths relative to `apps/mobile/`):
 
-- `android/app/build.gradle.kts` (`namespace` and `applicationId`), plus the folder and `package` line of `MainActivity.kt`
-- `ios/Runner.xcodeproj/project.pbxproj` and `macos/Runner/Configs/AppInfo.xcconfig`
-- `linux/CMakeLists.txt` (`APPLICATION_ID`)
+- **Android:** `android/app/build.gradle.kts` (`namespace` and `applicationId`); the `kotlin/com/gaegeroot/tinycosmos/` folder and the `package` line of `MainActivity.kt` and `TinyCosmosWidgetProvider.kt`; the fully qualified widget receiver name in `android/app/src/main/AndroidManifest.xml`
+- **iOS:** `ios/Runner.xcodeproj/project.pbxproj` (app, `.RunnerTests` and `.TinyCosmosWidget` bundle IDs; the widget ID must stay prefixed by the app ID)
+- **macOS:** `macos/Runner/Configs/AppInfo.xcconfig` (`PRODUCT_NAME`, `PRODUCT_BUNDLE_IDENTIFIER`); `macos/Runner.xcodeproj/project.pbxproj` (`.RunnerTests` IDs, `tiny_cosmos.app` product and `TEST_HOST`); `macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme` (`BuildableName`)
+- **Linux:** `linux/CMakeLists.txt` (`BINARY_NAME`, `APPLICATION_ID`)
+- **Windows:** `windows/CMakeLists.txt` (`project`, `BINARY_NAME`); `windows/runner/Runner.rc` (`InternalName`, `OriginalFilename`)
+
+User-facing display names ("Tiny Cosmos") are set separately in the platform manifests, `Info.plist` files, `web/` and the desktop runners.
 
 ## Docker dev container
 
