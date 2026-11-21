@@ -1,4 +1,4 @@
-package com.gaegeroot.checkin
+package com.gaegeroot.tinycosmos
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
