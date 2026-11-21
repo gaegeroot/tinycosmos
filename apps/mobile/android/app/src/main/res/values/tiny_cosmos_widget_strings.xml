@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tiny_cosmos_widget_name">Tiny Cosmos</string>
+    <string name="tiny_cosmos_widget_description">Shows this week\'s check-in question.</string>
+    <string name="tiny_cosmos_widget_label">This week\'s question</string>
+    <string name="tiny_cosmos_widget_snippet">What are you excited about this week?</string>
+</resources>

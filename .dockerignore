@@ -1,0 +1,8 @@
+.git
+.idea
+.dart_tool
+apps/mobile/.dart_tool
+apps/mobile/build
+build
+**/__pycache__
+**/*.pyc

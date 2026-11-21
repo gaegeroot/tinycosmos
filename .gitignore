@@ -31,6 +31,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/apps/mobile/build/
 /coverage/
 
 # Symbolication related
@@ -49,3 +50,8 @@ app.*.map.json
 
 # FVM
 .fvm/
+
+# Monorepo data
+/data/*.db
+/data/*.sqlite
+/data/*.sqlite3
