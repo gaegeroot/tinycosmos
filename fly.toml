@@ -1,0 +1,27 @@
+# Fly.io config for the Telegram bot (cmd/bot). See docs/telegram-bot.md.
+#
+# The bot uses long polling, so there is deliberately no [http_service]:
+# nothing is exposed publicly and Fly never auto-stops the machine.
+# Run exactly ONE machine: Telegram rejects a second poller with "conflict".
+
+app = "tiny-cosmos-bot"   # must be globally unique on Fly; change if taken
+primary_region = "lax"    # pick one near you: `fly platform regions`
+
+kill_signal = "SIGTERM"   # cmd/bot shuts down cleanly on SIGTERM
+kill_timeout = "30s"
+
+[build]
+  dockerfile = "infrastructure/deployment/bot.Dockerfile"
+
+[env]
+  TINY_COSMOS_DB_PATH = "/data/tiny-cosmos.db"
+
+# SQLite lives on a persistent volume. With a volume attached, deploys stop the
+# old machine before starting the new one, so two pollers never overlap.
+[mounts]
+  source = "bot_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

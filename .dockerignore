@@ -6,3 +6,9 @@ apps/mobile/build
 build
 **/__pycache__
 **/*.pyc
+# Never send local secrets or the dev database to a (remote) builder.
+.env
+.env.*
+data
+apps
+docs
