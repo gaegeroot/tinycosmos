@@ -1,0 +1,50 @@
+# Tests the Go code and deploys the Telegram bot to Fly.io on every push to
+# main that touches the bot. The deploy job reads FLY_API_TOKEN from the
+# GitHub "production" environment, which only main can use. Setup is in
+# docs/deployment.md.
+name: Deploy bot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cmd/**"
+      - "internal/**"
+      - "database/**"
+      - "go.mod"
+      - "go.sum"
+      - "fly.toml"
+      - "infrastructure/deployment/**"
+      - ".dockerignore"
+      - ".github/workflows/deploy-bot.yml"
+  workflow_dispatch: # allows a manual deploy from the Actions tab
+
+# Never run two deploys at once; a newer push waits for the current one.
+concurrency:
+  group: deploy-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go vet ./...
+      - run: go test ./...
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

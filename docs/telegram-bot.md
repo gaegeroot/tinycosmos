@@ -74,6 +74,12 @@ fly deploy
 fly logs                                 # shows the "add to group" link on startup
 ```
 
+### Automatic deploys
+
+`.github/workflows/deploy-bot.yml` runs `go vet` and `go test`, then `flyctl deploy`, on every push to `main` that touches the bot (Go code, migrations, `fly.toml`, or the Dockerfile). Changes that only touch the mobile app or docs don't redeploy. You can also start a deploy by hand from the repository's **Actions** tab.
+
+It deploys through the GitHub `production` environment, which holds the `FLY_API_TOKEN` secret and only accepts deploys from `main`. Setup is in [deployment.md](deployment.md#setting-up-the-production-environment-one-time).
+
 Keep it at **one machine**. A second copy would poll with the same token, and Telegram rejects that with a "conflict" error. The single volume enforces this, because a machine can only run where its volume is. Don't run the bot locally with the production token while the Fly machine is up. Create a separate dev bot in BotFather instead.
 
 To inspect the production database: `fly ssh sftp get /data/tiny-cosmos.db`. The image is distroless, so there's no shell inside it.
