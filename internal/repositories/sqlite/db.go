@@ -47,3 +47,26 @@ func Open(ctx context.Context, path string) (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+// execer is satisfied by both *sql.DB and *sql.Tx, so insert helpers can run
+// standalone or as part of a transaction.
+type execer interface {
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+}
+
+// inTx runs fn in a transaction, committing if fn returns nil and rolling back
+// otherwise.
+func inTx(ctx context.Context, db *sql.DB, fn func(tx *sql.Tx) error) error {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("sqlite: begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+	if err := fn(tx); err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("sqlite: commit transaction: %w", err)
+	}
+	return nil
+}
