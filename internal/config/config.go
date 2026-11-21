@@ -29,7 +29,8 @@ func LoadBot(getenv func(string) string) (Bot, error) {
 		DatabasePath:     strings.TrimSpace(getenv(EnvDatabasePath)),
 	}
 	if cfg.TelegramBotToken == "" {
-		return Bot{}, errors.New("config: " + EnvTelegramBotToken + " is not set; create a bot with @BotFather and put its token in .env")
+		return Bot{}, errors.New("config: " + EnvTelegramBotToken + " is not set. Put it in .env in the " +
+			"directory you run the bot from (see .env.example), or export it in your shell")
 	}
 	if cfg.DatabasePath == "" {
 		cfg.DatabasePath = DefaultDatabasePath

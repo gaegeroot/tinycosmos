@@ -39,11 +39,10 @@ From the repository root:
 
 ```bash
 cp .env.example .env        # then paste your token into .env
-set -a; . ./.env; set +a    # load .env into this shell
 go run ./cmd/bot
 ```
 
-`.env` is git-ignored. On startup the bot creates `data/tiny-cosmos.db` if needed, applies migrations, registers its command menu with Telegram, and logs its "add to group" link. Stop it with Ctrl+C.
+The bot reads `.env` from the directory you run it in, so run it from the repository root. Anything already set in your shell takes priority over `.env`. `.env` is git-ignored. On startup the bot creates `data/tiny-cosmos.db` if needed, applies migrations, registers its command menu with Telegram, and logs its "add to group" link. Stop it with Ctrl+C.
 
 It uses long polling, so it needs outbound internet access but no public URL. Only run **one copy at a time** per token: Telegram rejects a second poller with a "conflict" error. The same error appears if a webhook was ever set for the bot; clear it by opening `https://api.telegram.org/bot<token>/deleteWebhook` once.
 

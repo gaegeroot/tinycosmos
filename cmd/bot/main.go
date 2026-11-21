@@ -1,6 +1,7 @@
 // Command bot runs the Tiny Cosmos Telegram bot using long polling.
 //
-// Configuration comes from the environment (see internal/config):
+// Configuration comes from the environment, or from a .env file in the
+// working directory for anything not already set (see internal/config):
 //
 //	TELEGRAM_BOT_TOKEN   required, from @BotFather
 //	TINY_COSMOS_DB_PATH  optional, defaults to data/tiny-cosmos.db
@@ -39,6 +40,14 @@ func main() {
 func run(logger *slog.Logger) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	loadedDotEnv, err := config.LoadDotEnv(config.DefaultDotEnvPath)
+	if err != nil {
+		return err
+	}
+	if loadedDotEnv {
+		logger.Info("loaded settings from " + config.DefaultDotEnvPath)
+	}
 
 	cfg, err := config.LoadBot(os.Getenv)
 	if err != nil {
